@@ -72,4 +72,46 @@ newtype Pair a b = Pair {
 
 `x = getPair $ Pair(1, 2)`
 
-# type class
+# type class, instance
+
+- type class 는 interface 이며, instance 에서 구현 된다.
+
+```
+ghci> :i Maybe
+data Maybe a = Nothing | Just a         -- Defined in ‘GHC.Maybe’
+instance Applicative Maybe -- Defined in ‘GHC.Base’
+instance Eq a => Eq (Maybe a) -- Defined in ‘GHC.Maybe’
+instance Functor Maybe -- Defined in ‘GHC.Base’
+instance Monad Maybe -- Defined in ‘GHC.Base’
+instance Semigroup a => Monoid (Maybe a) -- Defined in ‘GHC.Base’
+instance Ord a => Ord (Maybe a) -- Defined in ‘GHC.Maybe’
+instance Semigroup a => Semigroup (Maybe a)
+  -- Defined in ‘GHC.Base’
+instance Show a => Show (Maybe a) -- Defined in ‘GHC.Show’
+instance MonadFail Maybe -- Defined in ‘Control.Monad.Fail’
+instance Read a => Read (Maybe a) -- Defined in ‘GHC.Read’
+instance Foldable Maybe -- Defined in ‘Data.Foldable’
+instance Traversable Maybe -- Defined in ‘Data.Traversable’
+```
+
+```
+-- Maybe 정의
+data Maybe a = Nothing | Just a
+```
+
+```
+ghci> :i Functor
+class Functor (f :: * -> *) where
+  fmap :: (a -> b) -> f a -> f b
+  (<$) :: a -> f b -> f a
+
+  ...
+
+```
+
+```
+-- Functor instance
+instance  Functor Maybe  where
+    fmap _ Nothing       = Nothing
+    fmap f (Just a)      = Just (f a)
+```

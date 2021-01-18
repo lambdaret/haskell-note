@@ -44,3 +44,31 @@ main = printf "%.2g\n" pi
 ```
 
 `3.14`
+
+## prompt setting
+
+```
+-- .ghci
+:set prompt "ghci> "
+```
+
+```
+-- type 이 같이 출력됨.
+:set +t
+```
+
+```
+-- type 출력 해제
+:unset +t
+
+```
+
+## load script
+
+```
+-- load
+:l learn.hs
+
+-- reload
+:r
+```
