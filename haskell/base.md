@@ -144,6 +144,18 @@ null [1,2,3]
 null []
 ```
 
+```
+null "abc"
+```
+
+`False`
+
+```
+null ""
+```
+
+`True`
+
 `True`
 
 ## take

@@ -44,10 +44,10 @@ instance Yesod Slash where
     cleanPath _ [] = Right []
     cleanPath _ s
         | dropWhile (not . T.null) s == [""] =
-            -- trace ("Rigth:" ++ show s) $ 
+            trace ("Rigth:" ++ show s) $ 
             Right $ init s
         | otherwise = 
-            -- trace ("Left:" ++ show s) $ 
+            trace ("Left:" ++ show s) $ 
             Left $ filter (not . T.null) s
 
 getRootR :: Handler Html 

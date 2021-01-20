@@ -47,3 +47,11 @@ main = do
 ```haskell
 data IOMode = ReadMode | WriteMode | AppendMode | ReadWriteMode
 ```
+
+```
+import Control.Monad.IO.Class
+
+liftIO getLine
+```
+
+`입력한 스트링 출력`

@@ -62,3 +62,19 @@ isJust Nothing
 ```
 
 `False`
+
+```haskell
+import Data.Maybe
+
+takeWhile isJust [Just 1, Nothing, Just 2, Nothing, Just 3]
+```
+
+`[Just 1]`
+
+```haskell
+import Data.Maybe
+
+dropWhile isJust [Just 1, Nothing, Just 2, Nothing, Just 3]
+```
+
+`[Nothing,Just 2,Nothing,Just 3]`
