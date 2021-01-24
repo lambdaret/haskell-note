@@ -52,7 +52,7 @@ gugu x y= (x,y,x*y)
 
 showGugu :: (Int,Int,Int) -> IO()
 showGugu (x, y, z) = do
-    printf "% 2d * % 2d = %02d\n" x y z
+    printf "%d * %d = %2d\n" x y z
 
 main :: IO ()
 main = do
@@ -65,8 +65,8 @@ main = do
 import Text.Printf ( printf )
 import Data.List ( intercalate )
 
-pringGu :: (Int,Int,Int) -> String
-pringGu (x,y,z) = printf "% 2d * % 2d = % 2d" x y z
+printGu :: (Int,Int,Int) -> String
+printGu (x,y,z) = printf "%d * %d = %2d" x y z
 
 getData :: [[(Int, Int, Int)]]
 getData =
@@ -77,9 +77,39 @@ getData =
 main :: IO()
 main =
     let
-        rowStr n = intercalate "\t" $ fmap pringGu $ getData!!n
+        rowStr row = do intercalate "\t" $ printGu <$> row
     in  do
-        print $ length getData
-        mapM_ putStrLn $ fmap rowStr [0..(length getData-1)]
+        mapM_ putStrLn $ rowStr <$> getData
 
+```
+
+## add dash
+
+```haskell
+import Text.Printf ( printf )
+import Data.List ( intercalate )
+
+printGu :: (Int,Int,Int) -> String
+printGu (x,y,z) = printf "%d * %d = %2d" x y z
+
+getData :: [[(Int, Int, Int)]]
+getData =
+    let gu0 = [2,4..8]
+        gu1 = [3,5..9]
+    in [[(x0, y, x0*y),(x1, y, x1*y)] | (x0,x1) <- zip gu0 gu1, y<-[1..9]]
+
+main :: IO()
+main =
+    let
+        dash [(_, y, _), _] =
+            if y == 9
+            -- then "\n" ++ (take 5 $ repeat '-') ++ "\t----------"
+            then "\n" ++ replicate 10 '-' ++ "\t" ++ replicate 10 '-'
+            else ""
+
+        rowStr row =
+            intercalate "\t" (printGu <$> row) ++ dash row
+
+    in  do
+        mapM_ putStrLn $ rowStr <$> getData
 ```
