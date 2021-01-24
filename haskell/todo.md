@@ -35,3 +35,7 @@ class Category a => Arrow a where
         where swap ~(x,y) = (y,x)
 
 ```
+
+```
+[(+), (*)] <*> [2] <*> [3]
+```

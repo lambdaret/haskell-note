@@ -10,6 +10,16 @@ Prelude> :set +m
 ```
 
 ```
+ghci> :{
+Prelude| let multiLine = "abcd\
+Prelude| \ efasdg"
+Prelude| :}
+multiLine :: [Char]
+ghci> putStrLn multiLine
+abcd efasdg
+```
+
+```
 Prelude> :seti
 base language is: Haskell2010
 with the following modifiers:
