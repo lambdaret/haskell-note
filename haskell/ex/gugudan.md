@@ -308,9 +308,6 @@ rowStr :: Int -> Int -> [(Int, Int, Int)] -> [Char]
 rowStr n nMax row =
     intercalate "\t" (printGu nMax <$> row) ++ dash n nMax (head row)
 
-cal :: Int -> Int -> (Int, Int, Int)
-cal x y = (x, y, x*y)
-
 main :: IO ()
 main = do
     args <- getArgs
