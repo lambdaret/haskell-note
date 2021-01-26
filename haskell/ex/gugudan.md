@@ -257,33 +257,24 @@ import Data.List ( intercalate )
 import Control.Monad
 import System.Environment ( getArgs )
 
-
-splitAt' :: Int -> [a] -> [[a]]
-splitAt' n xs =
-    let
-        (x1, x2) = splitAt n xs
-    in  case x2 of
-        [] -> [x1]
-        _ -> x1:splitAt' n x2
-
-splitAt2 :: [Int] -> [a] -> [[a]]
-splitAt2 (x:xn) xs =
+splitAt' :: [Int] -> [a] -> [[a]]
+splitAt' (x:xn) xs =
     let
         (x1, x2) = splitAt x xs
     in  case x2 of
         [] -> [x1]
-        _ -> x1:splitAt2 xn x2
+        _ -> x1:splitAt' xn x2
 
 spList :: Int -> Int -> [Int]
-spList n nMax = replicate (last [1..nMax]) . length =<< splitAt' n [2..nMax]
+spList n nMax = replicate (last [1..nMax]) . length =<< splitAt' (repeat n) [2..nMax]
 
 getData :: Int -> Int -> [[(Int, Int, Int)]]
 getData n nMax =
     let
-        p = splitAt' n [2..nMax]
+        p = splitAt' (repeat n) [2..nMax]
         f1 xs = (\y x ->(x,y,x*y)) <$> [1..nMax] <*> xs
     in
-        splitAt2 (spList n nMax) (f1 =<< p)
+        splitAt' (spList n nMax) (f1 =<< p)
 
 lenMax :: (Show a, Num a) => a -> Int
 lenMax n = length $ show n
@@ -318,4 +309,43 @@ main = do
     do
         mapM_ putStrLn $ rowStr nCol nMax <$> getData nCol nMax
 
+```
+
+## 다시 짠 코드
+
+```haskell
+module Main where
+import Data.List ( intercalate, transpose )
+import Text.Printf ( printf )
+import System.Environment ( getArgs )
+import Control.Monad ( join )
+
+input :: Int -> [[(Int, Int)]]
+input i = [[(x,y) | y<-[1..i]] | x<-[2..i]]
+
+dim2 :: Int -> [a] -> [[a]]
+dim2 n xs
+    | null xs       = []
+    | length xs < n = [take n xs]
+    | otherwise     = take n xs: dim2 n (drop n xs)
+
+input' :: Int -> Int -> [[[(Int, Int)]]]
+input' n i = dim2 n $ input i
+
+strOne :: (Int, Int) -> String
+strOne (x,y) = printf "%1d * %1d = %2d" x y (x*y) :: String
+
+strRow :: [(Int, Int)] -> String
+strRow xs = intercalate "\t" $ strOne <$> xs
+
+strGu :: [[(Int, Int)]] -> [Char]
+strGu xs = intercalate "\n" (strRow <$> transpose xs) ++ "\n"
+
+main :: IO ()
+main = do
+    args <- getArgs
+    let (nCol, nMax) = case args of
+            [x,y] -> (read x :: Int, read y :: Int)
+            _ -> (2, 9)  -- default
+    sequence_ $ putStrLn . strGu <$> input' nCol nMax
 ```
