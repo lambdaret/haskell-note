@@ -30,3 +30,43 @@ main = do
         Left x -> putStrLn $ "Left:" ++ show x
         Right x -> putStrLn $ "Right:" ++ show x
 ```
+
+##
+
+```haskell
+
+import Control.Exception ( SomeException, try )
+
+x :: Integer
+x = 5 `div` 0
+
+test :: IO (Either SomeException ())
+test = try (print x) :: IO (Either SomeException ())
+
+test2 :: IO ()
+test2 = do
+    f <- test
+    case f of
+        Left e -> print e
+        Right r -> print r
+```
+
+##
+
+```
+try :: Exception e => IO a -> IO (Either e a)
+try a = catch (a >>= \ v -> return (Right v)) (\e -> return (Left e))
+```
+
+##
+
+```
+catch   :: Exception e
+        => IO a         -- ^ The computation to run
+        -> (e -> IO a)  -- ^ Handler to invoke if an exception is raised
+        -> IO a
+catch (IO io) handler = IO $ catch# io handler'
+    where handler' e = case fromException e of
+                       Just e' -> unIO (handler e')
+                       Nothing -> raiseIO# e
+```
