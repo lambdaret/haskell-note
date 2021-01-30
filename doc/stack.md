@@ -1,6 +1,9 @@
 ## stack
 
 ```
+stack new project_name --resolver ghc-8.4.4
+
+
 -- install async
 stack install --resolver=ghc-8.4.4 async
 
