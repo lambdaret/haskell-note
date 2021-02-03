@@ -1,12 +1,11 @@
 
-import Control.Exception
-import Data.Typeable
-import Control.Monad.Catch
+f1 :: Integer -> Bool
+f1 = do
+    a <- (>5)
+    b <- (==6)
+    return $ a && b
 
-data SomethingBad = SomethingBad
-    deriving Typeable
-instance Show SomethingBad where
-    show SomethingBad = "something bad happened"
-instance Exception SomethingBad
-foo x = do
-    if x then return "abc" else throwM SomethingBad
+f2 = do
+    n <- [1,2]
+    x <- ['a', 'b']
+    return (n, x)

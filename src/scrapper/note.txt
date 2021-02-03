@@ -1,0 +1,86 @@
+{--
+f = do
+  x <- getPages "python"
+  case x of
+    Left e -> print (e :: HttpException)
+    Right r -> print $ show r
+
+    case x of
+      Left e -> print (e :: HttpException)
+      Right response -> L8.putStrLn $ getResponseBody response
+    
+      MonadIO a -> print $ show b
+      MonadThrow a -> print $ show a
+
+
+    
+    case eresponse of
+        Left e -> print (e :: HttpException)
+        Right response -> do
+          let 
+            statusCode = getResponseStatusCode response
+            doc = getResponseBody response
+            contentType = getResponseHeader "Content-Type" response
+            cursor = fromDocument $ parseLBS doc
+
+            li = cursor 
+              $// attributeIs "class" "pagination"
+              &/ element "ul"
+              &/ element "li"
+          printf "contentType: %s" $ show contentType
+    length $ filter (not.null.($// content)) li
+--}
+  
+-- getPages url = do
+--     request' <- parseRequest url
+--     response <- httpLBS request'
+--     let
+--       doc = getResponseBody response
+    
+--     return $ parseTags doc
+    -- return $ head $ dropWhile (~/= "<div class=pagination>") tags
+    
+    --   cursor = fromDocument $ parseLBS doc
+    --   li = cursor 
+    --           $// attributeIs "class" "pagination"
+    --           &/ element "ul"
+    --           &/ element "li"
+    -- return $ length $ filter (not.null.($// content)) li
+
+
+-- getPage :: (MonadThrow m, MonadIO m) => String -> m BLU.ByteString
+-- getPage url = do
+--   request' <- parseRequest url
+--   response <- httpLBS request'
+--   let doc = getResponseBody response
+--   return doc
+
+-- extractJob card = do
+--   return $ head $ card $/ attribute "data-jk"
+
+
+-- scrapper :: IO ()
+
+
+
+-- scrapper = do 
+--   let baseUrl = "GET https://kr.indeed.com/jobs?q=python&limit=50"
+--   doc <- getPages baseUrl
+--   print doc
+  -- print baseUrl
+  -- totCnt <- getPages baseUrl
+  -- -- print totCnt
+  -- let
+  --   urls = [baseUrl++"&start="++show (x*50) | x<-[0..(totCnt-1)]]
+  --   url = head urls
+  -- print url
+  -- doc <- getPage url
+  -- let
+  --   cursor = fromDocument $ parseLBS doc
+  --   searchCards = cursor 
+  --     $// attributeIs "class" "jobsearch-SerpJobCard"
+  --   card = head searchCards 
+  -- uid <- extractJob card
+  -- print uid
+  -- let
+  -- return $ head searchCards

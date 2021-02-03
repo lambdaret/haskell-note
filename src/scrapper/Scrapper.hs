@@ -1,22 +1,43 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Scrapper where
-  -- let url = "https://kr.indeed.com/jobs?q=" ++ term ++ "&limit=50"
 
-import qualified Data.ByteString.Lazy.Char8 as L8
+import Network.HTTP.Client
+import Network.HTTP.Client.TLS
+import Network.HTTP.Simple
 
-import qualified Data.ByteString.UTF8 as BSU
+import Control.Monad.IO.Class
+import Control.Monad.Catch
 
-import           Network.HTTP.Client
-import           Network.HTTP.Client.TLS
-import           Network.HTTP.Simple
-import Text.XML.Cursor
-import Text.HTML.DOM
-import Text.Printf
-import Control.Exception
-import Control.Monad
--- import Control.Monad.IO.Class
--- import Control.Monad.Catch
-import Control.Monad.IO.Unlift
+import Text.HTML.TagSoup
+    ( (~==), parseTags, fromAttrib, Tag(TagOpen) )
+import Text.Regex
+
+import qualified Data.Text.Lazy as TL
+
+import qualified Data.Text.Lazy.Encoding as TL
+
+import Data.Maybe
+
+data ExtractedJob = ExtractedJob 
+    { uid :: String
+    , title :: String
+    , location :: String
+    , salary :: String 
+    , summary :: String
+    } deriving Show
+
+
+matches :: String -> String -> Bool
+matches string regex = isJust $ mkRegex regex `matchRegex` string
+
+-- findTag :: String -> [Char] -> ((Tag str -> Bool) -> Bool) -> Bool
+-- findTag nm val tag = tag ((~== TagOpen "div" []) 
+--           && ((fromAttrib nm tag) `matches` ("\b" ++ val ++ "\b")))
+
+
+hasClass :: TL.Text -> [Tag TL.Text] -> Bool
+hasClass nm x = elem nm $ TL.words $ fromAttrib "class" (head x)
+-- f1 nm x = elem "jobsearch-SerpJobCard" $ words $ fromAttrib "class" (head x)
 
 initManager :: IO ()
 initManager = do
@@ -24,71 +45,60 @@ initManager = do
     setGlobalManager manager
 
 
--- getPages :: Exception e => p -> IO (Either e Request)
-getPages term = do
-    request' <- parseRequest "httpsxx//kr.indeed.com1"
-    -- let request = setRequestMethod "GET"
-    --               $ setRequestPath "/jobs"
-    --               $ setRequestQueryString [("q", Just (BSU.fromString term)), ("limit", Just "50")]
-    --               request'
-    return request'
-    -- httpLBS request
+-- getPage :: (MonadThrow m, MonadIO m) => String -> m [[[Tag TL.Text]]]
+-- getPage :: String -> m [[[Tag T.Text]]]
+getPage :: (MonadThrow m, MonadIO m) => String -> m [Tag TL.Text]
+getPage url = do
+  -- request <- parseRequest "GET https://kr.indeed.com/jobs?q=python&limit=50"
+  request <- parseRequest url
+  response <- httpLBS request
+  let
+    doc = getResponseBody response
+    tags = parseTags (TL.decodeUtf8 doc)
+    -- fmap (findTag "class" "jobsearch-SerpJobCard") tags
+    -- divs = (~== TagOpen "div" [] && fromAttrib "class" tag `matches` "") <$> tags
+  return tags
+    -- pages = filter (sections (hasClass "jobsearch-SerpJobCard")) divs
+  -- return pages
 
-    -- case req of
-    --   Left _ -> print "abc"
-    --   Right _ -> print "def"
-    -- req <- try $ parseRequest "https://kr.indeed.com1"
-    -- case req of
-    --   Left e1 -> print (e1 :: Exception)
-    --   Right r1 -> case r1 of
-    --       Left e2 -> print (e2 :: Exception)
-    --       Right r2 -> print $ show r2
-    -- case req of 
-    --   Left e -> print (e :: Request)
-    --   Right r -> print $ show r
-    -- setRequestMethod "GET"
-    --               $ setRequestPath "/jobs"
-    --               $ setRequestQueryString [("q", Just (BSU.fromString term)), ("limit", Just "50")]
-    --               request'  
-    
---     try $ httpLBS request
+-- parse = do
+--   let 
+--     request = getRequest "https://kr.indeed.com/jobs?q=python&limit=50" 
+--     response = simpleHttp request
+
+-- parse = do
+--   request <- parseRequest "GET https://kr.indeed.com/jobs?q=python&limit=50"
+--   response <- httpLBS request
+--   let
+--     doc = getResponseBody response
+--   print doc
+--     cursor = fromDocument $ parseLBS doc
+--     -- p = cursor $// attributeIs "class" "pagination" &/ element "li"
+--     f = elem "jobsearch-SerpJobCard" $ T.unwords . ($/attribute "class")
+--     p = head $ filter f $ (cursor $// element "div")
+
+    -- p = cursor $// attributeIs "data-tn-component" "organicJob"
+                --  &| (=="jobsearch-SerpJobCard unifiedRow row result")
+
+                --  &| (elem "jobsearch-SerpJobCard" . words)
+                --  &| (any (== "abc") $ words)
+      -- p = cursor $// attributeIs "class" "jobsearch-SerpJobCard unifiedRow row result"
+      -- jobsearch-SerpJobCard unifiedRow row result clickcard
+  -- print p
+  --   c = head p
+  --   title = T.unpack $ head $ 
+  --           c $// attributeIs "class" "title" &/ element "a" &/ content
+  --   location = T.unpack $ T.unwords $ 
+  --           c $// attributeIs "class" "sjcl" &// element "span" &/ content
+
+  -- putStrLn title
+  -- putStrLn location
+-- main = parse
 
 
--- f = do
---   x <- getPages "python"
---   case x of
---     Left e -> print (e :: HttpException)
---     Right r -> print $ show r
+-- f = (elem "jobsearch-SerpJobCard") . T.words . head . (++[""]) .($| attribute "class")
 
-    -- case x of
-      -- Left e -> print (e :: HttpException)
-    --   Right response -> L8.putStrLn $ getResponseBody response
-    
-      -- MonadIO a -> print $ show b
-      -- MonadThrow a -> print $ show a
+-- anyAttrValue (\x -> elem "cc" (words x)) [("class", "aa bb")]
 
+-- elem "jobsearch-SerpJobCard" $ words (fromAttrib "class")
 
-    
-    -- case eresponse of
-    --     Left e -> print (e :: HttpException)
-    --     Right response -> do
-    --       let 
-    --         statusCode = getResponseStatusCode response
-    --         doc = getResponseBody response
-    --         contentType = getResponseHeader "Content-Type" response
-    --         cursor = fromDocument $ parseLBS doc
-
-    --         li = cursor 
-    --           $// attributeIs "class" "pagination"
-    --           &/ element "ul"
-    --           &/ element "li"
-    --       printf "contentType: %s" $ show contentType
-    -- length $ filter (not.null.($// content)) li
-    
--- f2 = do
---   a <- return 3
---   b <- return 4
---   Just $ a*b
-  -- a <- return "Hello"
-  -- b <- return ", World"
-  -- putStrLn $ a ++ b

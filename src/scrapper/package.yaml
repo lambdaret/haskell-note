@@ -5,6 +5,7 @@ dependencies:
   - html-conduit
   - utf8-string
   - tagsoup
+  - regex-compat
 
 library:
   source-dirs: .
