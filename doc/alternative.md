@@ -1,7 +1,7 @@
 # <|>
 
 ```
-import Control.Applicatve
+import Control.Applicative
 ```
 
 ## <|>, Just
