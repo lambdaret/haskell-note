@@ -22,7 +22,7 @@ Just 2 <|> Nothing
 Nothing <|> Just 2
 ```
 
-`Nothing`
+`Just 2`
 
 ```
 Just 1 <|> Just 2
